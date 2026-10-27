@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DriveSync Compare</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>DriveSync Compare</h1>
+  <p class="sub">Compare two folders or drives, pick what to copy, and sync them — no subscription, and it <strong>never deletes anything</strong>.</p>
+</header>
+
+<section class="pickers">
+  <div class="picker">
+    <label>Left (A)</label>
+    <div class="row"><input id="pathA" type="text" placeholder="Choose a folder or drive…" readonly><button id="pickA">Browse…</button></div>
+  </div>
+  <div class="picker">
+    <label>Right (B)</label>
+    <div class="row"><input id="pathB" type="text" placeholder="Choose a folder or drive…" readonly><button id="pickB">Browse…</button></div>
+  </div>
+</section>
+
+<section class="controls">
+  <label>Compare by:
+    <select id="mode">
+      <option value="standard" selected>Standard — size + modified date (fast, good for most syncs)</option>
+      <option value="quick">Quick — size only (fastest)</option>
+      <option value="hash">Exact — SHA-256 hash of every file (slowest, certain — best for photo archives)</option>
+    </select>
+  </label>
+  <button id="compareBtn" class="primary">Compare</button>
+  <button id="cancelBtn" disabled>Cancel</button>
+  <span id="status" class="status"></span>
+</section>
+
+<section id="summary" class="summary hidden"></section>
+
+<section id="renames" class="renames hidden">
+  <h2>Possible folder renames</h2>
+  <p class="renamesNote"></p>
+  <div id="renameList"></div>
+  <div class="row">
+    <button id="renameOnB" class="primary">Rename on Right to match Left</button>
+    <button id="renameOnA" class="primary">Rename on Left to match Right</button>
+    <span id="renameStatus"></span>
+  </div>
+  <p class="hint">Renaming a folder on the other drive is instant and copies nothing — the files inside keep their place, just under the new name. This only works because the folders' contents match.</p>
+</section>
+
+<section id="toolbar" class="toolbar hidden">
+  <label>Show:
+    <select id="filter">
+      <option value="diff" selected>Differences only</option>
+      <option value="all">Everything</option>
+      <option value="onlyA">Only in Left</option>
+      <option value="onlyB">Only in Right</option>
+      <option value="different">Different in both</option>
+      <option value="same">Identical</option>
+    </select>
+  </label>
+  <input id="search" type="text" placeholder="Filter by filename…">
+  <button id="selVisible">Select all shown</button>
+  <button id="selNone">Select none</button>
+  <button id="selAtoB">Select all Left → Right</button>
+  <button id="selBtoA">Select all Right → Left</button>
+  <span id="selInfo"></span>
+</section>
+
+<section id="copybar" class="copybar hidden">
+  <button id="copyAtoB" class="primary">Copy selected: Left → Right</button>
+  <button id="copyBtoA" class="primary">Copy selected: Right → Left</button>
+  <button id="reportBtn">Save report (CSV)</button>
+  <span id="copyStatus"></span>
+</section>
+
+<div class="tablewrap">
+<table id="results" class="hidden">
+  <thead><tr>
+    <th class="cb"></th><th>Status</th><th>File / 📁 Folder (relative path)</th><th>Left size</th><th>Right size</th><th>Left modified</th><th>Right modified</th>
+  </tr></thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<section id="preview" class="preview hidden">
+  <h2 id="previewTitle">Preview</h2>
+  <div class="previewGrid">
+    <div class="previewSide">
+      <h3>Left</h3>
+      <div class="previewBody" id="previewA"></div>
+      <p class="previewMeta" id="previewMetaA"></p>
+      <button id="openA">Open Left file</button>
+    </div>
+    <div class="previewSide">
+      <h3>Right</h3>
+      <div class="previewBody" id="previewB"></div>
+      <p class="previewMeta" id="previewMetaB"></p>
+      <button id="openB">Open Right file</button>
+    </div>
+  </div>
+  <p class="hint">Tip: click any file row to preview it here — handy for checking “Different” photos side by side before deciding which way to copy. Videos and very large files preview as details only; use Open to view them in your usual app.</p>
+</section>
+
+<p class="hint">How it works: organize on your “live” drive, then copy Left → Right to its backup. Files and folders “Only in Left” can only go Left → Right, “Only in Right” only Right → Left. Selecting a 📁 folder creates it on the other side (empty folders included — so your structure can match even where no photos have landed yet). “Different” files will <em>overwrite</em> the other side when you copy in that direction — you'll get a warning count first. Identical items are never copied. Nothing is ever deleted. If you renamed a folder on the live drive, check the “Possible folder renames” panel above instead of copying — renaming on the backup is instant and leaves no duplicate behind.</p>
+
+<script src="renderer.js"></script>
+</body>
+</html>
